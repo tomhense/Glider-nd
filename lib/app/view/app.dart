@@ -2,7 +2,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:glider/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:glider/app/extensions/theme_mode_extension.dart';
 import 'package:glider/app/extensions/variant_extension.dart';
@@ -101,7 +101,7 @@ class App extends StatelessWidget {
         // Material 3 dictates a maximum width for bottom sheets.
         constraints: BoxConstraints(maxWidth: 640),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         margin: EdgeInsets.zero,
       ),
       chipTheme: ChipThemeData(
