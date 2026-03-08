@@ -28,8 +28,10 @@ Future<void> bootstrap(
       Bloc.observer = const AppBlocObserver();
       HydratedBloc.storage = await HydratedStorage.build(
         storageDirectory: kIsWeb
-            ? HydratedStorage.webStorageDirectory
-            : await getApplicationCacheDirectory(),
+            ? HydratedStorageDirectory.web
+            : HydratedStorageDirectory(
+                (await getApplicationCacheDirectory()).path,
+              ),
       );
       final deviceInfo = await DeviceInfoPlugin().deviceInfo;
 
