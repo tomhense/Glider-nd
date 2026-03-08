@@ -1,3 +1,11 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/3.22.0-0.1.pre"
+  "dart.flutterSdkPath": ".fvm/versions/3.22.0-0.1.pre",
+  "go.goroot": "/home/nulldev/.local/share/mise/installs/go/1.26.0",
+  "debug.javascript.defaultRuntimeExecutable": {
+    "pwa-node": "/home/nulldev/.local/share/mise/shims/node"
+  },
+  "go.alternateTools": {
+    "go": "/home/nulldev/.local/share/mise/shims/go",
+    "gopls": "/home/nulldev/.local/share/mise/shims/gopls"
+  }
 }
