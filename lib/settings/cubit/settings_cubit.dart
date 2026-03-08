@@ -300,7 +300,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final favorites = await _itemInteractionRepository.favoritedStream.first;
 
     try {
-      await Share.share(jsonEncode(favorites));
+      await SharePlus.instance.share(ShareParams(text: jsonEncode(favorites)));
     } on Object {
       emitPresentation(const SettingsActionFailedEvent());
     }

@@ -236,7 +236,7 @@ class ItemCubit extends HydratedCubit<ItemState>
   }
 
   Future<void> share(String text, {String? subject}) async {
-    await Share.share(text, subject: subject);
+    await SharePlus.instance.share(ShareParams(text: text, subject: subject));
   }
 
   @override
