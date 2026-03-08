@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/common/extensions/theme_data_extension.dart';
 import 'package:glider/common/extensions/uri_extension.dart';
