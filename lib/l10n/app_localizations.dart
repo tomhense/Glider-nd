@@ -388,17 +388,29 @@ abstract class AppLocalizations {
   /// **'Data'**
   String get data;
 
-  /// No description provided for @exportFavorites.
+  /// No description provided for @backup.
   ///
   /// In en, this message translates to:
-  /// **'Export favorites'**
-  String get exportFavorites;
+  /// **'Backup'**
+  String get backup;
 
-  /// No description provided for @exportFavoritesDescription.
+  /// No description provided for @backupDescription.
   ///
   /// In en, this message translates to:
-  /// **'Shares favorites as IDs in JSON format'**
-  String get exportFavoritesDescription;
+  /// **'Shares favorites, settings, and filters as JSON'**
+  String get backupDescription;
+
+  /// No description provided for @restoreBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore backup'**
+  String get restoreBackup;
+
+  /// No description provided for @restoreBackupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Imports favorites, settings, and filters from a JSON file'**
+  String get restoreBackupDescription;
 
   /// No description provided for @clearVisited.
   ///

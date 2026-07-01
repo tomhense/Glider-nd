@@ -135,6 +135,9 @@ class SharedPreferencesService {
   Future<List<String>?> getWordFilters() async =>
       _sharedPreferences.getStringList(_wordFiltersKey);
 
+  Future<bool> setWordFilters({required Iterable<String> values}) async =>
+      _sharedPreferences.setStringList(_wordFiltersKey, [...values.toSet()]);
+
   Future<bool> setWordFilter({
     required String value,
     required bool filter,
@@ -148,6 +151,9 @@ class SharedPreferencesService {
 
   Future<List<String>?> getDomainFilters() async =>
       _sharedPreferences.getStringList(_domainFiltersKey);
+
+  Future<bool> setDomainFilters({required Iterable<String> values}) async =>
+      _sharedPreferences.setStringList(_domainFiltersKey, [...values.toSet()]);
 
   Future<bool> setDomainFilter({
     required String value,
@@ -239,7 +245,10 @@ class SharedPreferencesService {
 
   Future<bool> setFavoritedIds({required Iterable<int> ids}) async {
     return _sharedPreferences
-        .setStringList(_favoritedKey, [...ids.map((id) => id.toString())]);
+        .setStringList(
+          _favoritedKey,
+          [...ids.toSet().map((id) => id.toString())],
+        );
   }
 
   Future<bool> getFlagged({required int id}) async =>

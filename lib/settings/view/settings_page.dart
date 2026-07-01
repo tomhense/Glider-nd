@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart' hide ThemeMode;
@@ -325,10 +326,16 @@ class _SettingsBody extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: Text(context.l10n.exportFavorites),
-              subtitle: Text(context.l10n.exportFavoritesDescription),
-              onTap: _settingsCubit.exportFavorites,
+              title: Text(context.l10n.backup),
+              subtitle: Text(context.l10n.backupDescription),
+              onTap: _settingsCubit.exportBackup,
             ),
+            if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+              ListTile(
+                title: Text(context.l10n.restoreBackup),
+                subtitle: Text(context.l10n.restoreBackupDescription),
+                onTap: _settingsCubit.importBackup,
+              ),
             ListTile(
               title: Text(context.l10n.clearVisited),
               onTap: () async {

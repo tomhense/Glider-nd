@@ -161,11 +161,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get data => 'Data';
 
   @override
-  String get exportFavorites => 'Export favorites';
+  String get backup => 'Backup';
 
   @override
-  String get exportFavoritesDescription =>
-      'Shares favorites as IDs in JSON format';
+  String get backupDescription =>
+      'Shares favorites, settings, and filters as JSON';
+
+  @override
+  String get restoreBackup => 'Restore backup';
+
+  @override
+  String get restoreBackupDescription =>
+      'Imports favorites, settings, and filters from a JSON file';
 
   @override
   String get clearVisited => 'Clear read statuses';

@@ -118,6 +118,9 @@ class SettingsRepository {
   Future<Set<String>?> getWordFilters() async =>
       (await _sharedPreferencesService.getWordFilters())?.toSet();
 
+  Future<bool> setWordFilters({required Iterable<String> values}) async =>
+      _sharedPreferencesService.setWordFilters(values: values);
+
   Future<bool> setWordFilter({
     required String value,
     required bool filter,
@@ -126,6 +129,9 @@ class SettingsRepository {
 
   Future<Set<String>?> getDomainFilters() async =>
       (await _sharedPreferencesService.getDomainFilters())?.toSet();
+
+  Future<bool> setDomainFilters({required Iterable<String> values}) async =>
+      _sharedPreferencesService.setDomainFilters(values: values);
 
   Future<bool> setDomainFilter({
     required String value,

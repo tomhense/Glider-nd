@@ -1,15 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:glider/common/extensions/bloc_base_extension.dart';
+import 'package:glider/settings/models/settings_backup.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:material_color_utilities/dynamiccolor/variant.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
 
 part 'settings_cubit_event.dart';
 part 'settings_state.dart';
@@ -296,11 +300,173 @@ class SettingsCubit extends Cubit<SettingsState>
     }
   }
 
-  Future<void> exportFavorites() async {
-    final favorites = await _itemInteractionRepository.favoritedStream.first;
-
+  Future<void> exportBackup() async {
     try {
-      await SharePlus.instance.share(ShareParams(text: jsonEncode(favorites)));
+      final backup = SettingsBackup(
+        favorites: await _itemInteractionRepository.getFavoritedIds(),
+        settings: SettingsBackupSettings(
+          themeMode: state.themeMode,
+          useDynamicTheme: state.useDynamicTheme,
+          themeColor: state.themeColor,
+          themeVariant: state.themeVariant,
+          usePureBackground: state.usePureBackground,
+          font: state.font,
+          storyLines: state.storyLines,
+          useLargeStoryStyle: state.useLargeStoryStyle,
+          showFavicons: state.showFavicons,
+          showStoryMetadata: state.showStoryMetadata,
+          showUserAvatars: state.showUserAvatars,
+          useActionButtons: state.useActionButtons,
+          showJobs: state.showJobs,
+          useThreadNavigation: state.useThreadNavigation,
+          enableDownvoting: state.enableDownvoting,
+          useInAppBrowser: state.useInAppBrowser,
+          useNavigationDrawer: state.useNavigationDrawer,
+        ),
+        filters: SettingsBackupFilters(
+          wordFilters: state.wordFilters.toList()..sort(),
+          domainFilters: state.domainFilters.toList()..sort(),
+        ),
+      );
+
+      await SharePlus.instance.share(
+        ShareParams(
+          text: const JsonEncoder.withIndent('  ').convert(backup.toJson()),
+          subject: 'Glider backup',
+        ),
+      );
+    } on Object {
+      emitPresentation(const SettingsActionFailedEvent());
+    }
+  }
+
+  Future<void> importBackup() async {
+    try {
+      if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+        emitPresentation(const SettingsActionFailedEvent());
+        return;
+      }
+
+      final backupBytes =
+          await const MethodChannel('nl.viter.glider/backup_picker')
+              .invokeMethod<Uint8List?>('pickBackupFile');
+
+      if (backupBytes == null) {
+        return;
+      }
+
+      final backup = SettingsBackup.fromJson(
+        jsonDecode(utf8.decode(backupBytes)),
+      );
+
+      final settings = backup.settings;
+      if (settings != null) {
+        if (settings.themeMode != null) {
+          await _settingsRepository.setThemeMode(value: settings.themeMode!);
+        }
+        if (settings.useDynamicTheme != null) {
+          await _settingsRepository.setUseDynamicTheme(
+            value: settings.useDynamicTheme!,
+          );
+        }
+        if (settings.themeColor != null) {
+          await _settingsRepository.setThemeColor(value: settings.themeColor!);
+        }
+        if (settings.themeVariant != null) {
+          await _settingsRepository.setThemeVariant(
+            value: settings.themeVariant!,
+          );
+        }
+        if (settings.usePureBackground != null) {
+          await _settingsRepository.setUsePureBackground(
+            value: settings.usePureBackground!,
+          );
+        }
+        if (settings.font != null) {
+          await _settingsRepository.setFont(value: settings.font!);
+        }
+        if (settings.storyLines != null) {
+          await _settingsRepository.setStoryLines(value: settings.storyLines!);
+        }
+        if (settings.useLargeStoryStyle != null) {
+          await _settingsRepository.setUseLargeStoryStyle(
+            value: settings.useLargeStoryStyle!,
+          );
+        }
+        if (settings.showFavicons != null) {
+          await _settingsRepository.setShowFavicons(
+            value: settings.showFavicons!,
+          );
+        }
+        if (settings.showStoryMetadata != null) {
+          await _settingsRepository.setShowStoryMetadata(
+            value: settings.showStoryMetadata!,
+          );
+        }
+        if (settings.showUserAvatars != null) {
+          await _settingsRepository.setShowUserAvatars(
+            value: settings.showUserAvatars!,
+          );
+        }
+        if (settings.useActionButtons != null) {
+          await _settingsRepository.setUseActionButtons(
+            value: settings.useActionButtons!,
+          );
+        }
+        if (settings.showJobs != null) {
+          await _settingsRepository.setShowJobs(value: settings.showJobs!);
+        }
+        if (settings.useThreadNavigation != null) {
+          await _settingsRepository.setUseThreadNavigation(
+            value: settings.useThreadNavigation!,
+          );
+        }
+        if (settings.enableDownvoting != null) {
+          await _settingsRepository.setEnableDownvoting(
+            value: settings.enableDownvoting!,
+          );
+        }
+        if (settings.useInAppBrowser != null) {
+          await _settingsRepository.setUseInAppBrowser(
+            value: settings.useInAppBrowser!,
+          );
+        }
+        if (settings.useNavigationDrawer != null) {
+          await _settingsRepository.setUseNavigationDrawer(
+            value: settings.useNavigationDrawer!,
+          );
+        }
+      }
+
+      final filters = backup.filters;
+      if (filters != null) {
+        if (filters.wordFilters != null) {
+          await _settingsRepository.setWordFilters(
+            values: filters.wordFilters!,
+          );
+        }
+        if (filters.domainFilters != null) {
+          await _settingsRepository.setDomainFilters(
+            values: filters.domainFilters!,
+          );
+        }
+      }
+
+      if (backup.favorites != null) {
+        final success = await _itemInteractionRepository.setFavoritedIds(
+          backup.favorites!,
+        );
+        if (!success) {
+          emitPresentation(const SettingsActionFailedEvent());
+          return;
+        }
+      }
+
+      await _load();
+    } on FormatException {
+      emitPresentation(const SettingsActionFailedEvent());
+    } on PlatformException {
+      emitPresentation(const SettingsActionFailedEvent());
     } on Object {
       emitPresentation(const SettingsActionFailedEvent());
     }

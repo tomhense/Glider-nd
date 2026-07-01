@@ -154,6 +154,16 @@ class ItemInteractionRepository {
     }
   }
 
+  Future<bool> setFavoritedIds(Iterable<int> ids) async {
+    try {
+      await _sharedPreferencesService.setFavoritedIds(ids: ids);
+      await getFavoritedIds();
+      return true;
+    } on Object {
+      return false;
+    }
+  }
+
   Future<bool> flag(int id, {required bool flag}) async {
     try {
       final userCookie = await _secureStorageService.getUserCookie();
