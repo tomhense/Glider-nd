@@ -3,17 +3,19 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:cross_file/cross_file.dart';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:glider/common/extensions/bloc_base_extension.dart';
 import 'package:glider/settings/models/settings_backup.dart';
 import 'package:glider_domain/glider_domain.dart';
+import 'package:intl/intl.dart';
 import 'package:material_color_utilities/dynamiccolor/variant.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter/services.dart';
 
 part 'settings_cubit_event.dart';
 part 'settings_state.dart';
@@ -328,10 +330,21 @@ class SettingsCubit extends Cubit<SettingsState>
           domainFilters: state.domainFilters.toList()..sort(),
         ),
       );
+      final backupJson =
+          const JsonEncoder.withIndent('  ').convert(backup.toJson());
+      final backupFileName = 'glider-backup-'
+          '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.json';
 
       await SharePlus.instance.share(
         ShareParams(
-          text: const JsonEncoder.withIndent('  ').convert(backup.toJson()),
+          files: [
+            XFile.fromData(
+              utf8.encode(backupJson),
+              name: backupFileName,
+              mimeType: 'application/json',
+            ),
+          ],
+          fileNameOverrides: [backupFileName],
           subject: 'Glider backup',
         ),
       );
