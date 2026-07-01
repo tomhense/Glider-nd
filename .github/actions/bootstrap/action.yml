@@ -41,6 +41,7 @@ runs:
         brew tap leoafarias/fvm
         brew trust leoafarias/fvm
         brew install fvm@${{ inputs.fvm-version }}
+        echo "$(brew --prefix fvm@${{ inputs.fvm-version }})/bin" >> $GITHUB_PATH
       env:
         HOMEBREW_NO_ENV_HINTS: '1'
     - name: Set up Flutter
