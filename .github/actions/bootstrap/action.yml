@@ -9,7 +9,7 @@ runs:
   using: composite
   steps:
     - name: Set up Homebrew
-      uses: Homebrew/actions/setup-homebrew@master
+      uses: Homebrew/actions/setup-homebrew@main
     - name: Disable Homebrew analytics
       shell: bash
       run: brew analytics off
@@ -17,21 +17,20 @@ runs:
       shell: bash
       run: echo "HOMEBREW_CELLAR=$(brew --cellar)" >> $GITHUB_ENV
     - name: Cache Homebrew
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: |
-          ${{ env.HOMEBREW_CELLAR }}/dart
           ${{ env.HOMEBREW_CELLAR }}/fvm@${{ inputs.fvm-version }}
         key: ${{ runner.os }}-homebrew-fvm-${{ inputs.fvm-version }}
         restore-keys: ${{ runner.os }}-homebrew-fvm-
     - name: Cache FVM
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/fvm
         key: ${{ runner.os }}-fvm-${{ hashFiles('.fvmrc') }}
         restore-keys: ${{ runner.os }}-fvm-
     - name: Cache pub
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.pub-cache
         key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
@@ -40,7 +39,8 @@ runs:
       shell: bash
       run: |
         brew tap leoafarias/fvm
-        brew link dart fvm@${{ inputs.fvm-version }} || brew install fvm@${{ inputs.fvm-version }}
+        brew trust leoafarias/fvm
+        brew install fvm@${{ inputs.fvm-version }}
       env:
         HOMEBREW_NO_ENV_HINTS: '1'
     - name: Set up Flutter
