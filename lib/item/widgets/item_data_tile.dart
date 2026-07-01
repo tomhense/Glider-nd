@@ -44,6 +44,7 @@ class ItemDataTile extends StatelessWidget {
     this.padding = AppSpacing.defaultTilePadding,
     this.onTap,
     this.onLongPress,
+    this.onTapFiltered,
     this.onTapFavorite,
     this.onTapUpvote,
   });
@@ -69,6 +70,7 @@ class ItemDataTile extends StatelessWidget {
   final EdgeInsets padding;
   final ItemCallback? onTap;
   final ItemCallback? onLongPress;
+  final VoidCallback? onTapFiltered;
   final VoidCallback? onTapUpvote;
   final VoidCallback? onTapFavorite;
 
@@ -266,14 +268,26 @@ class ItemDataTile extends StatelessWidget {
         ),
         Hero(
           tag: 'item_tile_filtered_${item.id}',
-          child: AnimatedVisibility(
-            visible: filtered,
-            padding: MetadataWidget.horizontalPadding,
-            child: const MetadataWidget(
-              icon: Icons.filter_alt_outlined,
-              label: Text('[filtered]'),
-            ),
-          ),
+          child: onTapFiltered != null
+              ? _MetadataBadgeButton(
+                  padding: MetadataWidget.horizontalPadding,
+                  onTap: onTapFiltered,
+                  child: AnimatedVisibility(
+                    visible: filtered,
+                    child: const MetadataWidget(
+                      icon: Icons.filter_alt_outlined,
+                      label: Text('[filtered]'),
+                    ),
+                  ),
+                )
+              : AnimatedVisibility(
+                  visible: filtered,
+                  padding: MetadataWidget.horizontalPadding,
+                  child: const MetadataWidget(
+                    icon: Icons.filter_alt_outlined,
+                    label: Text('[filtered]'),
+                  ),
+                ),
         ),
         ...[
           if (item.isDeleted)
@@ -585,6 +599,33 @@ class _MetadataActionButton extends StatelessWidget {
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: child,
+      ),
+    );
+  }
+}
+
+class _MetadataBadgeButton extends StatelessWidget {
+  const _MetadataBadgeButton({
+    this.padding = EdgeInsets.zero,
+    this.onTap,
+    required this.child,
+  });
+
+  final EdgeInsetsGeometry padding;
+  final VoidCallback? onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: padding,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          child: child,
+        ),
       ),
     );
   }

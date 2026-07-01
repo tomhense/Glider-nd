@@ -32,6 +32,7 @@ class ItemTile extends StatefulWidget {
     this.showVisited = true,
     this.highlight = false,
     this.forceShowMetadata = true,
+    this.showFilteredPresentation = true,
     this.style = ItemStyle.full,
     this.padding = AppSpacing.defaultTilePadding,
     this.onTap,
@@ -51,6 +52,7 @@ class ItemTile extends StatefulWidget {
     this.showVisited = true,
     this.highlight = false,
     this.forceShowMetadata = true,
+    this.showFilteredPresentation = true,
     this.style = ItemStyle.full,
     this.padding = AppSpacing.defaultTilePadding,
     this.onTap,
@@ -69,6 +71,7 @@ class ItemTile extends StatefulWidget {
   final bool showVisited;
   final bool highlight;
   final bool forceShowMetadata;
+  final bool showFilteredPresentation;
   final ItemStyle style;
   final EdgeInsets padding;
   final ItemCallback? onTap;
@@ -80,6 +83,7 @@ class ItemTile extends StatefulWidget {
 class _ItemTileState extends State<ItemTile>
     with AutomaticKeepAliveClientMixin {
   late final ItemCubit _itemCubit;
+  var _showFilteredPresentation = true;
 
   @override
   void initState() {
@@ -152,20 +156,22 @@ class _ItemTileState extends State<ItemTile>
                       favorited: state.favorited,
                       flagged: state.flagged,
                       blocked: state.blocked,
-                      filtered: item.title != null &&
-                              settingsState.wordFilters.any(
-                                (word) => item.title!.containsWord(
-                                  word,
-                                  caseSensitive: false,
-                                ),
-                              ) ||
-                          item.url != null &&
-                              settingsState.domainFilters.any(
-                                (domain) => item.url!.host.containsWord(
-                                  domain,
-                                  caseSensitive: false,
-                                ),
-                              ),
+                      filtered: widget.showFilteredPresentation &&
+                          _showFilteredPresentation &&
+                          (item.title != null &&
+                                  settingsState.wordFilters.any(
+                                    (word) => item.title!.containsWord(
+                                      word,
+                                      caseSensitive: false,
+                                    ),
+                                  ) ||
+                              item.url != null &&
+                                  settingsState.domainFilters.any(
+                                    (domain) => item.url!.host.containsWord(
+                                      domain,
+                                      caseSensitive: false,
+                                    ),
+                                  )),
                       failed: state.status == Status.failure,
                       collapsedCount: widget.collapsedCount,
                       storyLines: settingsState.storyLines,
@@ -202,6 +208,14 @@ class _ItemTileState extends State<ItemTile>
                           widget._settingsCubit,
                         ),
                       ),
+                      onTapFiltered: widget.showFilteredPresentation &&
+                              _showFilteredPresentation
+                          ? () {
+                              setState(() {
+                                _showFilteredPresentation = false;
+                              });
+                            }
+                          : null,
                       onTapUpvote: settingsState.useActionButtons &&
                               ItemAction.upvote
                                   .isVisible(state, authState, settingsState)
