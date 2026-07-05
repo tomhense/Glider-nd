@@ -17,20 +17,20 @@ extension UriExtension on Uri {
     }
 
     if (await canLaunchUrl(this)) {
-      if (await supportsLaunchMode(LaunchMode.externalNonBrowserApplication)) {
-        final success = await launchUrl(
-          this,
-          mode: LaunchMode.externalNonBrowserApplication,
-          webOnlyWindowName: title,
-        );
-        if (success) return true;
-      }
-
       if (useInAppBrowser &&
           await supportsLaunchMode(LaunchMode.inAppBrowserView)) {
         final success = await launchUrl(
           this,
           mode: LaunchMode.inAppBrowserView,
+          webOnlyWindowName: title,
+        );
+        if (success) return true;
+      }
+
+      if (await supportsLaunchMode(LaunchMode.externalNonBrowserApplication)) {
+        final success = await launchUrl(
+          this,
+          mode: LaunchMode.externalNonBrowserApplication,
           webOnlyWindowName: title,
         );
         if (success) return true;
