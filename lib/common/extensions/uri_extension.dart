@@ -17,8 +17,7 @@ extension UriExtension on Uri {
     }
 
     if (await canLaunchUrl(this)) {
-      if (useInAppBrowser &&
-          await supportsLaunchMode(LaunchMode.inAppBrowserView)) {
+      if (useInAppBrowser) {
         final success = await launchUrl(
           this,
           mode: LaunchMode.inAppBrowserView,
