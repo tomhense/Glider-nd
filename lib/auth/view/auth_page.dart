@@ -205,8 +205,33 @@ class _AuthInAppBrowser extends InAppBrowser {
 
   final AuthCubit _authCubit;
 
+  static const _loginPagePaddingScript = '''
+(() => {
+  const styleId = 'glider-auth-login-padding';
+  if (document.getElementById(styleId) != null) return;
+
+  const style = document.createElement('style');
+  style.id = styleId;
+  style.textContent = `
+    html {
+      scroll-padding-top: 24px !important;
+    }
+
+    body {
+      box-sizing: border-box;
+      padding-top: 24px !important;
+    }
+  `;
+
+  document.head.appendChild(style);
+})();
+''';
+
   @override
   void onPageCommitVisible(WebUri? url) {
+    unawaited(
+      webViewController?.evaluateJavascript(source: _loginPagePaddingScript),
+    );
     _authCubit.login();
     super.onPageCommitVisible(url);
   }
