@@ -1,0 +1,2 @@
+- Fixed reply composition preview and send button not updating
+- Added top padding to the Hacker News login page inside the in-app browser
