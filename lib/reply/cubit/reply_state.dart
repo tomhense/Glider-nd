@@ -18,7 +18,7 @@ class ReplyState with EquatableMixin {
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'parentItem': parentItem,
+        'parentItem': parentItem?.toMap(),
         'text': text.value,
         'isValid': isValid,
       };
